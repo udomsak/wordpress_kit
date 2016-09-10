@@ -1,0 +1,61 @@
+version: '2'
+
+services:
+  openresty:
+    build: ./openresty
+    hostname: openresty
+    image: udomsak/openresty
+    entrypoint: /usr/local/openresty/bin/openresty -g "daemon off;"
+    links:
+     - redis
+     - phpmyadmin
+    volumes:
+     - ./data/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf 
+  redis:
+    image: redis
+    hostname: redis
+    expose:
+     - 6379
+     - 6380
+  wordpress:
+    image: wordpress:4.6.1-fpm
+    hostname: wordpress
+    expose:
+      - 80
+    ports:
+      - 80:80
+    expose:
+      - 9000
+    volumes:
+      - ./data/php-fpm-conf/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    links:
+      - redis
+      - mysql
+    environment:
+      - WORDPRESS_DB_PASSWORD=wp_wordpress
+      - WORDPRESS_DB_USER=wp_wordpress
+      - WORDPRESS_DB_NAME=wp_wordpress
+  mysql:
+    image: mariadb
+    hostname: mariabdb_wordpressa
+    volumes:
+      - ./data/conf_mysql:/etc/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=wp_wordpress
+      - MYSQL_USER=wp_wordpress
+      - MYSQL_PASSWORD=wp_wordpress
+
+  phpmyadmin:
+    build: ./phpmyadmin
+    image: udomsak/phpmyadmin
+    hostname: wp_db_admin
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=wp_wordpress
+      - PMA_PASSWORD=wp_wordpress
+    links:
+      - mysql
+    expose:
+      - 80
+
