@@ -1,3 +1,4 @@
+![http://www.unixdev.co.th](https://github.com/udomsak/wordpress_kit/blob/master/docs/unixdev-logo-web-h122.png)
 # WordPress Kit 
 
 WordPress kit is Unixdev wordpress-stack that compound with
